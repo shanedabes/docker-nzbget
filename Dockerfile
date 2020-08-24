@@ -3,7 +3,7 @@ FROM lsiobase/alpine:3.12 as buildstage
 
 # set NZBGET version
 ARG NZBGET_RELEASE
-ARG NZB_COMMIT=414ffcb
+ARG NZB_COMMIT=414ffcbc35b71271cb52d533c4c5617db8616c22
 
 RUN \
  echo "**** install build packages ****" && \
@@ -25,8 +25,7 @@ RUN \
  mkdir -p /app/nzbget && \
  git clone https://github.com/nzbget/nzbget.git nzbget && \
  cd nzbget/ && \
- git checkout ${NZBGET_RELEASE} && \
- git cherry-pick -n ${NZB_COMMIT} && \
+ git checkout ${NZBGET_COMMIT} && \
  ./configure \
 	bindir='${exec_prefix}' && \
  make && \
