@@ -14,25 +14,10 @@ on:
       - created
 
 env:
-  IMAGE_NAME: shanedabes/ircbot
+  IMAGE_NAME: shanedabes/nzbget
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-
-      - name: Lint
-        uses: docker://mushus/golangci-linter:1.1.2
-
-      - name: Test
-        uses: shoukoo/golang-pipeline/go1.13/test@master
-
   docker:
-    needs: test
-
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
 
@@ -70,30 +55,3 @@ jobs:
             --platform linux/amd64,linux/arm,linux/arm64/v8 \
             --tag ${IMAGE_ID}:${VERSION} \
             --file ./Dockerfile .
-
-  release:
-    needs: test
-
-    runs-on: ubuntu-latest
-    if: github.event_name == 'release'
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Unshallow
-        run: git fetch --prune --unshallow
-
-      - name: Set up Go
-        uses: actions/setup-go@v1
-        with:
-          go-version: 1.13.8
-
-      - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v1
-        with:
-          version: latest
-          args: release --rm-dist
-          key: ${{ secrets.YOUR_PRIVATE_KEY }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
